@@ -58,8 +58,13 @@ class LongTermMemory:
     def _load_memories(self) -> List[Dict]:
         """Load memories from disk"""
         if self.storage_path.exists():
-            with open(self.storage_path, 'r') as f:
-                return json.load(f)
+            try:
+                with open(self.storage_path, 'r') as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        return data
+            except (json.JSONDecodeError, ValueError):
+                pass
         return []
     
     def _save_memories(self):
